@@ -6,17 +6,14 @@ import User from "@/models/User";
 export async function GET(req, res) {
     try {
         const token = await req?.cookies?._parsed?.get('token')?.value;
-        console.log('token', token);
 
         if (!token) {
             return new NextResponse(JSON.stringify({ message: 'Token not found!', error: 1 }));
         }
 
         const verify = jwt.verify(token, process.env.JWT_SECRET_KEY);
-        console.log(verify.id);
 
         const user = await User.findOne({ _id: verify.id });
-        console.log(user);
 
         if (!verify || !user)
             return new NextResponse(JSON.stringify({ message: 'Token is invalid!', error: 1 }));

@@ -15,3 +15,20 @@ form {
     align-items: center;
     gap: 5px;
 }
+
+.product {
+    border: 1px solid #000;
+    border-radius: 20px;
+    padding: 10px;
+}
+
+.product img {
+    height: 200px;
+    width: 200px;
+    object-fit: cover;
+}
+
+.product div {
+    display: flex;
+    flex-direction: column;
+}

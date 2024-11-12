@@ -1,7 +1,7 @@
 'use client';
 import Link from "next/link";
 import { useContext } from "react";
-import { Context } from "./context-provider";
+import { Context } from "./pages/set-product/context-provider";
 import './header.css';
 
 const Header = () => {

@@ -1,6 +1,9 @@
+'use client';
 import './page.css';
 
 const Products = () => {
+
+
     return (
         <section className="products">
             <nav>
@@ -18,7 +21,7 @@ const Products = () => {
             <a href="#">Books</a>
             <a href="#">Pet</a>
             </nav>
-            All Products
+
         </section>
     );
 };

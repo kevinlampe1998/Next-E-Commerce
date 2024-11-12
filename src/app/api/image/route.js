@@ -21,7 +21,7 @@ export async function POST(req, res) {
       });
       const url = uploadResponse.secure_url;
 
-      const newImage = new Image({ fileName: body.fileName, url });
+      const newImage = new Image({ url });
 
       const savedImage = await newImage.save();
 

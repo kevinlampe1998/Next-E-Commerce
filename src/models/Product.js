@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 
 const ProductSchema = new mongoose.Schema({
-    name: { type: String, required: true, unique: true },
+    seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    product_name: { type: String, required: true, unique: true },
     primary_image: { type: mongoose.Schema.Types.ObjectId, ref: 'Image' },
     secondary_images: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Image' }],
     description: { type: String, required: true },

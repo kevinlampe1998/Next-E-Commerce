@@ -1,68 +1,127 @@
 'use client';
-import { useEffect, useState, useContext } from 'react';
-import { Context } from '@/app/context-provider';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState, useContext, useRef } from 'react';
+import { Context } from '@/app/pages/set-product/context-provider';
 
 export default function ImageUploader() {
   const [ image, setImage ] = useState(null);
   const [ product, setProduct ] = useState({
-    name: '',
-    price: '',
+    seller: '',
+    product_name: '',
+    price: '0,00',
     category: '',
     description: '',
     primary_image: null
   });
   const { clientDB, dispatch } = useContext(Context);
-
-  useEffect(() => {
-    !clientDB.user && (window.location.href = '/');
-  }, []);
+  const router = useRouter();
+  const imageMessage = useRef();
+  const productMessage = useRef();
+  const [imageUploadSuccess, setImageUploadSuccess] = useState(false);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
     const reader = new FileReader();
     reader.onloadend = () => setImage(reader.result);
     reader.readAsDataURL(file);
   };
 
-  const handleUpload = async () => {
+  const handleUpload = async (event) => {
+    event.preventDefault();
+
+    setProduct(prev => ({ ...prev, seller: clientDB.user._id }));
+
     const response = await fetch('/api/image', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ data: image, fileName }),
+      body: JSON.stringify({ data: image }),
     });
     const data = await response.json();
-    console.log(data);
-    return data.image._id;
+
+    data.success && setProduct(prev => ({ ...prev, primary_image: data.image._id }));
+    data.success && setImageUploadSuccess(true);
+
+    data.error && (imageMessage.current.style.color = 'red');
+    data.error && (imageMessage.current.innerHTML = data.message);
+
   };
 
-  const postProduct = async (event) => {
-    event.preventDefault();
+  const postProduct = async () => {
 
-    const image_id = await handleUpload();
-    console.log(image_id);
-
-    setProduct(prev => ({ ...prev, primary_image: image_id }));
-
-    const res = await fetch('/api/set-product', {
+    const res = await fetch('/api/products', {
       method: 'POST', body: JSON.stringify(product)
     });
     const data = await res.json();
-    console.log(data);
+
+    data.error && (productMessage.current.style.color = 'red');
+    data.error && (productMessage.current.innerHTML = data.message);
+
+    data.success && router.push('/pages/set-product/success');
+
+    data.error && setImageUploadSuccess(false);
+
   };
 
+  const correctPrice = (event) => {
+    const value = event.target.value;
+
+    if (value.length < 4) {
+        const removedComma = value.replace(',', '');
+        const unshiftZeroComma = removedComma.split('');
+        unshiftZeroComma.unshift('0,');
+        setProduct((prev) => ({ ...prev, price: unshiftZeroComma.join('')}));
+        return;
+    }
+
+    
+    const numbers = '0123456789'.split('');
+    
+    const lastChar = value.slice(-1);
+    
+    if (!numbers.includes(lastChar)) {
+        setProduct((prev) => ({ ...prev, price: value.slice(0, -1)}));
+        return;
+    }
+    
+    const removedComma = value.replace(',', '');
+    
+    const numberArray = removedComma.split('');
+    numberArray.splice(numberArray.length - 2, 0, ',');
+    
+    const under2Digits = numberArray.length < 4 && numberArray.join('').replace(',', '');
+    
+    const prePrice = under2Digits ? under2Digits : numberArray.join('');
+    
+    if (prePrice.length > 4 && prePrice[0] === '0') {
+        const removedZero = prePrice.split('');
+        removedZero.shift();
+        setProduct((prev) => ({ ...prev, price: removedZero.join('')}));
+
+        return;
+    }
+
+    setProduct(prev => ({ ...prev, price: prePrice }));
+  };
+
+  useEffect(() => {
+    product.primary_image && imageUploadSuccess && postProduct();
+  }, [imageUploadSuccess]);
+
   return (
-    <form onSubmit={postProduct}>
+    <form onSubmit={handleUpload}>
 
       <label>Product Name</label>
-      <input type='text' onChange={(e) => setProduct(prev => ({ ...prev, name: e.target.value }))} value={product.name} required/>
+      <input type='text' onChange={(e) => setProduct(prev => ({ ...prev, product_name: e.target.value }))} value={product.product_name} required/>
 
       <label>Image</label>
       <input type="file" onChange={handleFileChange} />
 
       <label>Description</label>
-      <input type='text' onChange={(e) => setProduct(prev => ({ ...prev, description: e.target.value }))} value={product.description} required/>
+      <textarea type='text' onChange={(e) => setProduct(prev => ({ ...prev, description: e.target.value }))} value={product.description} required>
+      </textarea>
 
       <label>Category</label>
       <select id="category" name="category" value={product.category} onChange={(e) => setProduct((prev) => ({ ...prev, category: e.target.value }))} required>
@@ -84,10 +143,10 @@ export default function ImageUploader() {
       </select>
 
       <label>Price</label>
-      <input type='text' onChange={(e) => setProduct(prev => ({ ...prev, price: e.target.value }))} value={product.price} required/>
+      <input type='text' onChange={correctPrice} value={product.price} required/>
 
-      <div></div>
-      <div></div>
+      <div ref={imageMessage}></div>
+      <div ref={productMessage}></div>
 
       <button type='submit'>Submit</button>
 

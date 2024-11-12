@@ -1,5 +1,6 @@
 'use client';
-import { Context } from "@/app/context-provider";
+import { useRouter } from "next/navigation";
+import { Context } from "@/app/pages/set-product/context-provider";
 import { useEffect, useState, useRef, useContext } from "react";
 import './page.css';
 
@@ -19,6 +20,7 @@ const RegisterLogin = () => {
     const [ message, setMessage ] = useState('');
     const messageRef = useRef();
     const { clientDB, dispatch } = useContext(Context);
+    const router = useRouter();
 
     const post = async (event, route) => {
         event.preventDefault();
@@ -28,7 +30,6 @@ const RegisterLogin = () => {
             body: JSON.stringify(user)
         });
         const data = await res.json();
-        console.log(data);
 
         data.success && (messageRef.current.style.color = 'green');
         data.error && (messageRef.current.style.color = 'red');
@@ -36,6 +37,8 @@ const RegisterLogin = () => {
         setMessage(data.message);
 
         data.success && dispatch({ type: 'set user', payload: data.user });
+
+        data.success && router.push('/');
     };
 
     const select = (option) => {
