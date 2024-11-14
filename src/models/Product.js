@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import User from './User';
+import Image from './Image';
 
 const ProductSchema = new mongoose.Schema({
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },

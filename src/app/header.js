@@ -1,7 +1,7 @@
 'use client';
 import Link from "next/link";
 import { useContext } from "react";
-import { Context } from "./pages/set-product/context-provider";
+import { Context } from "./context-provider";
 import './header.css';
 
 const Header = () => {
@@ -16,7 +16,12 @@ const Header = () => {
             
             {
               clientDB?.user?.role === 'sell' &&
-              <Link href='/pages/set-product'>Set Product</Link>                
+              <Link href='/pages/set-product'>Set Product</Link>          
+            }
+
+            {
+              clientDB?.user?.role === 'sell' &&
+              <Link href='/pages/my-products'>My Product</Link>          
             }
 
             {

@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from "next/navigation";
-import { Context } from "@/app/pages/set-product/context-provider";
+import { Context } from "@/app/context-provider";
 import { useEffect, useState, useRef, useContext } from "react";
 import './page.css';
 

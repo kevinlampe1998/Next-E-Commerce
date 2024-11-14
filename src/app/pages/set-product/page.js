@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useContext, useRef } from 'react';
-import { Context } from '@/app/pages/set-product/context-provider';
+import { Context } from '@/app/context-provider';
 
 export default function ImageUploader() {
   const [ image, setImage ] = useState(null);

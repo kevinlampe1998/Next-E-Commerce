@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import Product from "@/models/Product";
+import Image from "@/models/Image";
+import User from "@/models/User";
 
 export async function POST(req) {
     try {

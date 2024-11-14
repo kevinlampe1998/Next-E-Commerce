@@ -18,14 +18,8 @@ const ContextProvider = ({ children }) => {
         const res = await fetch('/api/users/check-cookie');
         const data = await res.json();
 
-        console.log(data);
-
         data.success && dispatch({ type: 'set user', payload: data.user });
     };
-
-    useEffect(() => {
-        console.log(clientDB);
-    });
 
     useEffect(() => {
         !clientDB.user && onloadCheckCookie();

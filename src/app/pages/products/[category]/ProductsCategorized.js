@@ -1,26 +1,26 @@
 'use client';
-import { useContext, useEffect, useState } from "react";
-import { Context } from "./context-provider";
+import { useEffect, useState } from "react";
 
-const Home = () => {
-    const { clientDB, dispatch } = useContext(Context);
 
-    const [ randomProducts, setRandomProducts ] = useState([]);
+const ProductsCategorized = ({ category }) => {
+    const [ products, setProducts ] = useState();
 
-    const fetchRandomProducts = async () => {
-        const res = await fetch('/api/products');
+    const fetchProducts = async () => {
+        const res = await fetch(`/api/products/${category}`);
         const data = await res.json();
-        setRandomProducts(data.products);
+        setProducts(data.products);
     };
 
     useEffect(() => {
-        fetchRandomProducts();
+        fetchProducts();
     }, []);
 
     return (
         <>
+            <h2>{ category[0].toUpperCase() + category.slice(1, category.length) }</h2>
+
             {
-                randomProducts?.map(product => (
+                products?.map(product => (
                     <div className='product' key={product._id}>
                         <h4>{product.product_name}</h4>
                         <img src={product?.primary_image?.url} />
@@ -37,4 +37,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default ProductsCategorized;

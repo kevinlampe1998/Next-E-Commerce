@@ -1,4 +1,4 @@
-import ContextProvider from "./pages/set-product/context-provider";
+import ContextProvider from "./context-provider";
 import Header from "./header";
 import './globals.css';
 
